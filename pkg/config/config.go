@@ -28,3 +28,24 @@ func ReadConfig() (*models.Config, error) {
 	defer data.Close()
 	return LoadConfig(data)
 }
+func Validate(c *models.Config) error {
+	if c.RequestPeriod <= 0 {
+		return fmt.Errorf("RequestPeriod must be > 0")
+	}
+	if len(c.RSS) == 0 {
+		return fmt.Errorf("no RSS feeds specified")
+	}
+	if len(c.DBHost) == 0 {
+		return fmt.Errorf("no DBHost specified")
+	}
+	if len(c.DBUser) == 0 {
+		return fmt.Errorf("no DBUser specified")
+	}
+	if len(c.DBPassword) == 0 {
+		return fmt.Errorf("no DBPassword specified")
+	}
+	if len(c.RSS) == 0 {
+		return fmt.Errorf("no RSS feeds specified")
+	}
+	return nil
+}
