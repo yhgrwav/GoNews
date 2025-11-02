@@ -1,4 +1,5 @@
 {
+  "requestPeriod": 5,
   "db_host": "localhost",
   "db_port": 5432,
   "db_user": "postgres",
