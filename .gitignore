@@ -1,0 +1,32 @@
+# compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.out
+
+# build output
+/bin/
+build/
+dist/
+
+# dependency directories
+/vendor/
+
+# IDE configs
+.idea/
+.vscode/
+
+# system files
+.DS_Store
+Thumbs.db
+
+# logs, caches
+*.log
+*.tmp
+
+# environment and secrets
+.env
+
+# temporary test data
+*.testdata
