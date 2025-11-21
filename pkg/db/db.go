@@ -63,3 +63,9 @@ func GetLastNews(db *gorm.DB, limit int) ([]models.News, error) {
 	}
 	return news, nil
 }
+
+func GetNewsByID(db *gorm.DB, id int) (models.News, error) {
+	var news models.News
+	err := db.First(&news, id).Error
+	return news, err
+}

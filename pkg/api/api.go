@@ -36,6 +36,23 @@ func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) er
 		c.JSON(http.StatusOK, news)
 	})
 
+	// GET /news/:id
+	router.GET("/news/:id", func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "id must be an integer"})
+			return
+		}
+
+		news, err := db.GetNewsByID(database, id)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "news not found"})
+			return
+		}
+		c.JSON(http.StatusOK, news)
+	})
+
 	// GET /news/refresh
 	router.GET("/news/refresh", func(c *gin.Context) {
 		err := rss.UpdateAll(cfg.RSS, loader, database)
