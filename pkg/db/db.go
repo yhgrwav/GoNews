@@ -25,6 +25,7 @@ func Connect(cfg *models.Config) (*gorm.DB, error) {
 		log.Printf("Ошибка подключения к БД: %v", err)
 		return nil, err
 	}
+	DB.Exec("TRUNCATE news RESTART IDENTITY CASCADE;") // реюзаем пространство, которое заняли в прошлом запуске
 	err = DB.AutoMigrate(&models.News{})
 	if err != nil {
 		log.Printf("Ошибка Миграции БД:%v", err)
@@ -33,6 +34,8 @@ func Connect(cfg *models.Config) (*gorm.DB, error) {
 	log.Println("Успешное подключение к БД!")
 	return DB, nil
 }
+
+// SaveNews сохраняет список новостей в БД, игнорируя дубликаты
 func SaveNews(db *gorm.DB, news []models.News) error {
 	for _, n := range news {
 		err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&n).Error
