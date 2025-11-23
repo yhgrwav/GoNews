@@ -15,7 +15,7 @@ import (
 func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) error {
 	router := gin.Default()
 
-	// GET /news?limit=10
+	// GET /news?limit=5
 	router.GET("/news", func(c *gin.Context) {
 		limitStr := c.DefaultQuery("limit", "5")
 
