@@ -15,7 +15,7 @@ import (
 func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) error {
 	router := gin.Default()
 
-	// GET /news?limit=10
+	// GET /news?limit=5
 	router.GET("/news", func(c *gin.Context) {
 		limitStr := c.DefaultQuery("limit", "5")
 
@@ -37,28 +37,26 @@ func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) er
 		c.JSON(http.StatusOK, news)
 	})
 
-	// GET /news/:id
-	router.GET("/news/:id", func(c *gin.Context) {
-		idStr := c.Param("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"Error": "id must be an integer"})
-			return
-		}
-
-		news, err := db.GetNewsByID(database, id)
-		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"Error": "news not found"})
-			return
-		}
-		c.JSON(http.StatusOK, news)
-	})
-
 	// GET /news/refresh
+	// вызывает горутину, отвечающую за явный вызов функции LoadAndParse
 	router.GET("/news/refresh", func(c *gin.Context) {
 		go worker.StartWorkerPool(cfg, database, loader)
 		c.JSON(http.StatusOK, gin.H{"Status": "refresh started"})
 	})
-	//health
+	// GET /news/health
+	// Возвращает 2 результата: состояние текущего соединения и результат пинга БД
+	router.GET("/news/health", func(c *gin.Context) {
+		sqlDB, err := database.DB()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"Error": "database connection problem"})
+			return
+		}
+		err = sqlDB.Ping()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"Error": "database is unreachable"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"Status": "OK"})
+	})
 	return router.Run(":8080")
 }

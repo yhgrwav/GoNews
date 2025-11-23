@@ -3,15 +3,14 @@ package models
 import "time"
 
 type Config struct {
-	RSS           []string `json:"rss"`
-	RequestPeriod int      `json:"request_period"`
-	NewsAmount    int      `json:"NewsAmount"`
-	DBHost        string   `json:"db_host"`
-	DBPort        int      `json:"db_port"`
-	DBUser        string   `json:"db_user"`
-	DBPassword    string   `json:"db_password"`
-	DBName        string   `json:"db_name"`
-	APIPort       string   `json:"api_port"`
+	RSS        []string `json:"rss"`
+	NewsAmount int      `json:"NewsAmount"`
+	DBHost     string   `json:"db_host"`
+	DBPort     int      `json:"db_port"`
+	DBUser     string   `json:"db_user"`
+	DBPassword string   `json:"db_password"`
+	DBName     string   `json:"db_name"`
+	APIPort    string   `json:"api_port"`
 }
 type News struct {
 	ID      uint      `gorm:"primaryKey"`
