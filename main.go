@@ -5,6 +5,7 @@ import (
 	"GoNews/pkg/config"
 	"GoNews/pkg/db"
 	"GoNews/pkg/rss"
+	"GoNews/pkg/worker"
 	"log"
 )
 
@@ -25,14 +26,8 @@ func main() {
 	// 3. Создаём загрузчик RSS
 	loader := rss.HTTPRSSLoader{}
 
-	// 4. Первичное обновление RSS при старте
-	log.Println("Updating RSS feeds...")
-	err = rss.UpdateAll(cfg.RSS, loader, database)
-	if err != nil {
-		log.Printf("RSS initial update failed: %v", err)
-	} else {
-		log.Println("RSS updated successfully.")
-	}
+	// 4. Запускаем worker pool для фонового обновления RSS
+	worker.StartWorkerPool(cfg, database, loader)
 
 	// 5. Запускаем сервер
 	log.Println("Starting HTTP API on :8080")
