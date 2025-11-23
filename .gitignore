@@ -30,3 +30,6 @@ Thumbs.db
 
 # temporary test data
 *.testdata
+
+# config
+config.json
