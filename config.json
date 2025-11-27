@@ -9,6 +9,7 @@
     "https://lenta.ru/rss",
     "https://habr.com/ru/rss/hub/go/all/?fl=ru",
     "https://habr.com/ru/rss/best/daily/?fl=ru",
-    "https://moex.com/export/news.aspx?cat=100"
+    "https://moex.com/export/news.aspx?cat=100",
+    "https://tass.ru/rss/v2.xml"
   ]
 }
