@@ -12,7 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) error {
+func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) *http.Server {
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
 	// GET /news?limit=5
@@ -40,7 +41,7 @@ func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) er
 	// GET /news/refresh
 	// вызывает горутину, отвечающую за явный вызов функции LoadAndParse
 	router.GET("/news/refresh", func(c *gin.Context) {
-		go worker.StartWorkerPool(cfg, database, loader)
+		go worker.StartWorkerPool(c, cfg, database, loader)
 		c.JSON(http.StatusOK, gin.H{"Status": "refresh started"})
 	})
 	// GET /news/health
@@ -58,5 +59,8 @@ func StartServer(database *gorm.DB, cfg *models.Config, loader rss.RSSLoader) er
 		}
 		c.JSON(http.StatusOK, gin.H{"Status": "OK"})
 	})
-	return router.Run(":8080")
+	return &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
 }
