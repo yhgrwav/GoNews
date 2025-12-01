@@ -50,24 +50,7 @@ go mod download
 docker-compose up -d
 ```
 
-### 3. Создать config.json
-
-```json
-{
-  "db_host": "localhost",
-  "db_port": 5432,
-  "db_user": "postgres",
-  "db_password": "ваш_пароль",
-  "db_name": "postgres",
-  "rss": [
-    "https://vc.ru/rss/all",
-    "https://www.technologyreview.com/feed/",
-    "https://habr.com/ru/rss/best/daily/?fl=ru",
-    "https://moex.com/export/news.aspx?cat=100",
-    "https://techcrunch.com/feed/"
-  ]
-}
-```
+### 3. Переименовать config.json.example в config.json и указать пароль (если используете docker-compose, то пароль необходимо указать такой же как и в docker-compose.yml)
 
 ### 4. Запуск
 
