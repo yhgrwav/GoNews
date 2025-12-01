@@ -1,0 +1,14 @@
+{
+  "db_host": "localhost",
+  "db_port": 5432,
+  "db_user": "postgres",
+  "db_password": "1",
+  "db_name": "postgres",
+  "rss": [
+    "https://vc.ru/rss/all",
+    "https://www.technologyreview.com/feed/",
+    "https://habr.com/ru/rss/best/daily/?fl=ru",
+    "https://moex.com/export/news.aspx?cat=100",
+    "https://techcrunch.com/feed/"
+  ]
+}

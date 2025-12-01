@@ -4,26 +4,47 @@ import (
 	"GoNews/pkg/models"
 	"encoding/xml"
 	"net/url"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/microcosm-cc/bluemonday"
 )
 
-// Структура тела новости, куда мы будем сохранять данные
+// Структура тела новости для RSS-источников
 type rssFeed struct {
 	Channel struct {
 		Items []struct {
 			Title       string `xml:"title"`
 			Link        string `xml:"link"`
 			Description string `xml:"description"`
-			Content     string `xml:"encoded"` //
-			Content2    string `xml:"content"` // Возможные теги с содержимым тела новостей
-			Summary     string `xml:"summary"` //
 			PubDate     string `xml:"pubDate"`
 		} `xml:"item"`
 	} `xml:"channel"`
 }
 
+// clearContent выполняет очистку html-мусора
+func clearContent(content string) string {
+	if content == "" {
+		return ""
+	}
+
+	// 1) var p удаляет html разметку с помощью готового решения bluemonday
+	p := bluemonday.StrictPolicy()
+	content = p.Sanitize(content)
+
+	// 2) spaceCleaner убирает \n \t \r с помощью regexp
+	spaceCleaner := regexp.MustCompile(`[\n\t\r]{2,}`)
+	content = spaceCleaner.ReplaceAllString(content, " ")
+
+	// 3) strings.Join соединяет слова одним пробелом
+	content = strings.Join(strings.Fields(content), " ")
+
+	// 4) в конце функция отдаёт контент с дополнительной очисткой начала и конца каждой строки
+	return strings.TrimSpace(content)
+}
+
+// ParseRSSFeed преобразует XML RSS-ленты в []models.News
 func ParseRSSFeed(b []byte) ([]models.News, error) {
 	var feed rssFeed
 	err := xml.Unmarshal(b, &feed)
@@ -31,29 +52,21 @@ func ParseRSSFeed(b []byte) ([]models.News, error) {
 		return nil, err
 	}
 
-	p := bluemonday.StripTagsPolicy() // Метод, который вызывается при каждой итерации для очистки контента от HTML тегов
-
-	var news []models.News
+	news := make([]models.News, 0, len(feed.Channel.Items))
 
 	for _, item := range feed.Channel.Items {
 		parsedTime, err := time.Parse(time.RFC1123Z, item.PubDate)
-		text := item.Content // Многоэтапная проверка контента: если способ ничего не дал -> переключаемся на следующий
-		if text == "" {
-			text = item.Content2
-		}
-		if text == "" {
-			text = item.Description
-		}
-		if text == "" {
-			text = item.Summary
-		}
-		text = p.Sanitize(text) // Чистка от тегов с помощью готового решения blueMonday
 		if err != nil {
 			parsedTime = time.Now()
 		}
+
+		// Единственное корректное поле контента для всех выбранных источников
+		text := clearContent(item.Description)
+
+		// Определяем домен источника
 		source, err := url.Parse(item.Link)
 		if err != nil {
-			source = &url.URL{} // Пустой url вместо nil в случае ошибки
+			source = &url.URL{}
 		}
 		n := models.News{
 			Title:   item.Title,
@@ -67,7 +80,7 @@ func ParseRSSFeed(b []byte) ([]models.News, error) {
 	return news, nil
 }
 
-// LoadAndParse загружает RSS по URL и парсит его в []models.News.
+// LoadAndParse загружает RSS-ленту по URL и парсит её в []models.News.
 func LoadAndParse(url string, loader RSSLoader) ([]models.News, error) {
 	raw, err := loader.LoadRSS(url)
 	if err != nil {
