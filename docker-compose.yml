@@ -5,7 +5,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1
+      POSTGRES_PASSWORD: ваш_пароль
       POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
