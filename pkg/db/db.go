@@ -72,3 +72,11 @@ func GetNewsByID(db *gorm.DB, id int) (models.News, error) {
 	err := db.First(&news, id).Error
 	return news, err
 }
+
+func Close(db *gorm.DB) error {
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+	return sqlDB.Close()
+}
