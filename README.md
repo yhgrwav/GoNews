@@ -115,4 +115,4 @@ npm run dev
 
 - Добавить кэширование (Redis)
 - Добавить unit-тесты
-- Создать Dockerfile для backend
+- Интегрировать Redis(cache) 
