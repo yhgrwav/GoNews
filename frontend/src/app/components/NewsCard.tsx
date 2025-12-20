@@ -25,7 +25,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
                 </span>
             </div>
             <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                <a href={`/news/${news.ID}`} className="hover:underline">
+                <a href={news.Link} target="_blank" rel="noopener noreferrer" className="hover:underline">
                     {news.Title}
                 </a>
             </h2>
@@ -34,7 +34,9 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
             </p>
             <div className="mt-auto">
                 <a
-                    href={`/news/${news.ID}`}
+                    href={news.Link}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline font-medium"
                 >
                     Read more

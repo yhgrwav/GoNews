@@ -13,7 +13,8 @@ interface NewsItem {
 async function getNews(): Promise<NewsItem[]> {
   try {
     // Fetch from backend directly since this is server-side
-    const res = await fetch('http://localhost:8080/news?limit=50', {
+    const apiUrl = process.env.API_URL || 'http://localhost:8080';
+    const res = await fetch(`${apiUrl}/news?limit=50`, {
       cache: 'no-store',
       next: { revalidate: 0 }
     });
