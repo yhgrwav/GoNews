@@ -3,6 +3,7 @@ package config
 import (
 	"GoNews/pkg/models"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 )
@@ -26,5 +27,28 @@ func ReadConfig() (*models.Config, error) {
 		return nil, err
 	}
 	defer data.Close()
-	return LoadConfig(data)
+	cfg, err := LoadConfig(data)
+	if err != nil {
+		return nil, err
+	}
+
+	if envHost := os.Getenv("DB_HOST"); envHost != "" {
+		cfg.DBHost = envHost
+	}
+	if envPort := os.Getenv("DB_PORT"); envPort != "" {
+		var p int
+		if _, err := fmt.Sscanf(envPort, "%d", &p); err == nil {
+			cfg.DBPort = p
+		}
+	}
+	if envUser := os.Getenv("DB_USER"); envUser != "" {
+		cfg.DBUser = envUser
+	}
+	if envPassword := os.Getenv("DB_PASSWORD"); envPassword != "" {
+		cfg.DBPassword = envPassword
+	}
+	if envName := os.Getenv("DB_NAME"); envName != "" {
+		cfg.DBName = envName
+	}
+	return cfg, nil
 }
